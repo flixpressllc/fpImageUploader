@@ -6,6 +6,8 @@
     "custom-react-scripts": "0.0.23"
   },
   "dependencies": {
+    "breakpoint-sass": "^2.7.0",
+    "compass-mixins": "^0.12.10",
     "react": "^15.4.2",
     "react-dom": "^15.4.2"
   },
