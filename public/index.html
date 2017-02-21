@@ -84,17 +84,29 @@
       <div id="root"></div>
 
       <script type="text/javascript">
-        ImageSelectionInterfaceCreate({
-          // proceedButtonClientId: 'Upload_BT',
-          // imageFilenamesHiddenFieldClientId: 'ImageValue',
-          // selectMax: 8,
-          // selectMin: 2,
-          // userId: 238917,
-          // userHasApiAccess: true,
-          // selectionContainer: 'selected_list',
-          // overflowContainer: 'overflow_images',
-          // debugMode: (window.location.host.match('files|localhost') !== null) // debug on dev server
-        });
+      (function () {
+        function imageSelectionExists () {
+          return !!window.ImageSelectionInterfaceCreate;
+        }
+        var tryItInterval = setInterval(function () {
+          if (imageSelectionExists()) {
+            clearInterval(tryItInterval);
+
+            ImageSelectionInterfaceCreate({
+              // proceedButtonClientId: 'Upload_BT',
+              // imageFilenamesHiddenFieldClientId: 'ImageValue',
+              // selectMax: 8,
+              // selectMin: 2,
+              // userId: 238917,
+              // userHasApiAccess: true,
+              // selectionContainer: 'selected_list',
+              // overflowContainer: 'overflow_images',
+              // debugMode: (window.location.host.match('files|localhost') !== null) // debug on dev server
+            });
+
+          }
+        }, 100);
+      })();
       </script>
 
   </body>

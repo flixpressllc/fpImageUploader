@@ -5,6 +5,20 @@ class FileUploader extends Component {
   handleClick() {
     this.fileUploadElement.click();
   }
+
+  handleFileChange (e) {
+    e.preventDefault();
+
+    let reader = new FileReader();
+    let file = e.target.files[0];
+
+    reader.onloadend = () => {
+      console.log(reader.result)
+    }
+
+    reader.readAsText(file)
+  }
+
   render() {
     return (
       <div className="fpImageUploader-FileUploader">
