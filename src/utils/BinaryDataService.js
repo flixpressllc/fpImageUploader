@@ -1,16 +1,17 @@
 export function dataURLToBlob (dataURL) {
-  var BASE64_MARKER = ';base64,';
-  if (dataURL.indexOf(BASE64_MARKER) == -1) {
-    var parts = dataURL.split(',');
-    var contentType = parts[0].split(':')[1];
-    var raw = parts[1];
+  var parts, contentType, raw;
+  const BASE64_MARKER = ';base64,';
+  if (dataURL.indexOf(BASE64_MARKER) === -1) {
+    parts = dataURL.split(',');
+    contentType = parts[0].split(':')[1];
+    raw = parts[1];
 
     return new Blob([raw], { type: contentType });
   }
 
-  var parts = dataURL.split(BASE64_MARKER);
-  var contentType = parts[0].split(':')[1];
-  var raw = window.atob(parts[1]);
+  parts = dataURL.split(BASE64_MARKER);
+  contentType = parts[0].split(':')[1];
+  raw = window.atob(parts[1]);
   var rawLength = raw.length;
 
   var uInt8Array = new Uint8Array(rawLength);
@@ -20,4 +21,20 @@ export function dataURLToBlob (dataURL) {
   }
 
   return new Blob([uInt8Array], { type: contentType });
+}
+
+export function binaryToAscii (bin) {
+  return btoa(bin);
+}
+
+export function fileToBinary (file) {
+  var binary = "";
+  var bytes = new Uint8Array(file);
+  var length = bytes.byteLength;
+
+  for (var i = 0; i < length; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+
+  return binary;
 }

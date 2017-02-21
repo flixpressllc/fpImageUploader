@@ -1,5 +1,9 @@
-import React, { Component, PropTypes as PT } from 'react';
+import React, { Component } from 'react';
 import FileUploader from './lib/FileUploader';
+import './ImageUploadButton.scss';
+
+import { binaryToAscii, fileToBinary } from '../utils/BinaryDataService';
+import { stringToHash } from '../utils/StringUtils';
 
 const propTypes = {
   // text: PT.string.isRequired,
@@ -9,23 +13,71 @@ const propTypes = {
 class ImageUploadButton extends Component {
   handleChange (e) {
     e.preventDefault();
-    console.log('in it')
-    let reader = new FileReader();
-    let file = e.target.files[0];
+    this.fileChangeHandler(e);
+  }
 
-    reader.onloadend = () => {
-      // do something with reader.result
-      console.log(reader.result);
+  registerUserImage(image, nameForImage) {
+    console.log(image, nameForImage);
+
+    // // Create appropriately sized data urls
+    // var smallDataUrl = ImageProcessingService.createResizedImageDataUrl(image, 150);
+    // var largeDataUrl;
+    // largeDataUrl = ImageProcessingService.createResizedImageDataUrl(image, 1200);
+    //
+    // // Prepare display image
+    // var displayImage = new Image();
+    // displayImage.name = nameForImage;
+    // displayImage.src = smallDataUrl;
+    //
+    // // Prepare uploadable data
+    // var blob = BinaryDataService.dataURLToBlob(largeDataUrl);
+    // blob.lastModifiedDate = new Date();
+    // blob.name = '' + nameForImage;
+    //
+    // // Disperse data
+    // buildSelectedUserImageUI(displayImage, blob);
+    // checkPageState();
+  }
+
+  onFileLoad (file) {
+    var binary = fileToBinary(file);
+    var asciiString = binaryToAscii(binary);
+    var hash = stringToHash(asciiString);
+
+    // if (!isRegisteredUserImage(hash)) {
+    if (true) {
+
+      var image = new Image();
+      image.onload = () => this.registerUserImage(image,hash);
+      image.src = "data:image/jpeg;base64," + asciiString;
+
+    }
+  }
+
+  fileChangeHandler (e) {
+    let files = e.target.files;
+    let numFilesReceived = files.length;
+    let _this = this;
+
+    function onFileLoad() {
+      // `this` is the file reader
+      _this.onFileLoad(this.result);
     }
 
-    reader.readAsDataURL(file)
+    for (var i = 0; i < numFilesReceived ; i++) {
+      var reader = new FileReader();
+      reader.onload = onFileLoad;
+      reader.readAsArrayBuffer(files[i]);
+    }
   }
+
 
   render() {
     return (
-      <div className="fpImageUploader-ImageUploadButton">
-        <FileUploader text="Upload Images" onChange={ this.handleChange }/>
-      </div>
+      <FileUploader className="fpImageUploader-ImageUploadButton"
+        buttonClass="fpImageUploader-ImageUploadButton-button"
+        multiple={ true }
+        text="Upload Images" onChange={ this.handleChange.bind(this) }/>
     );
   }
 }
