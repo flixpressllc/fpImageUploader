@@ -1,41 +1,36 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes as PT } from 'react';
 import './FileUploader.scss';
+
+const propTypes = {
+  text: PT.string.isRequired,
+  onChange: PT.func.isRequired
+}
 
 class FileUploader extends Component {
   handleClick() {
     this.fileUploadElement.click();
   }
 
-  handleFileChange (e) {
-    e.preventDefault();
-
-    let reader = new FileReader();
-    let file = e.target.files[0];
-
-    reader.onloadend = () => {
-      console.log(reader.result)
-    }
-
-    reader.readAsText(file)
-  }
-
   render() {
+    let className = this.props.className || '';
     return (
-      <div className="fpImageUploader-FileUploader">
+      <div className={ className }>
         <input
           type="file"
-          onChange={ this.handleFileChange }
+          onChange={ this.props.onChange }
           ref={ el => this.fileUploadElement = el }
           style={{display: 'none'}}
         />
         <input
           type="button"
-          value="Upload a File"
+          value={ this.props.text }
           onClick={ this.handleClick.bind(this) }
         />
       </div>
     );
   }
 }
+
+FileUploader.propTypes = propTypes;
 
 export default FileUploader;
