@@ -19,6 +19,10 @@ class ImageStore extends EventEmitter {
     return clone(this.state.userImages);
   }
 
+  getImageCount () {
+    return Object.keys(this.state.userImages).length;
+  }
+
   preProcessImageFile (file) {
     var asciiString = binaryToAscii(fileToBinary(file));
     var hash = stringToHash(asciiString);

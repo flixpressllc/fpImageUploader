@@ -29,13 +29,20 @@
   &:hover {
     color: white;
     background-color: darken($flixpress-blue, 10);
-}
+  }
+
   &.cancel {
     background-color: #999;
 
     &:hover {
       background-color: darken(#999, 10);
     }
+  }
+
+  &[disabled], &[disabled]:hover {
+    background-color: #999;
+    color: #ccc;
+    cursor: not-allowed;
   }
 }
 
@@ -54,6 +61,7 @@
   border: 1px solid #bbb;
   font-size: 16px;
 }
+
 %label {
   margin-right: 1em;
   &:after {

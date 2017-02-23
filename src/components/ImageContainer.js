@@ -7,10 +7,14 @@ import { traverseObject } from 'happy-helpers';
 class ImageContainer extends Component {
   constructor (props) {
     super(props);
-    ImageStore.on('change', this.displayImage.bind(this));
+    this.displayImage = this.displayImage.bind(this);
+
     this.state = {};
   }
 
+  componentDidMount() {
+    ImageStore.on('change', this.displayImage);
+  }
   componentWillUnmout() {
     ImageStore.removeListener('change', this.displayImage)
   }

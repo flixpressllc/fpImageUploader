@@ -9,10 +9,15 @@ const STATE_KEYS_FROM_STORE = ['isUploading', 'canUpload']
 class ProceedButton extends Component {
   constructor (props) {
     super(props);
-    StateStore.on('STATE_UPDATED', this.setStateViaStore.bind(this));
+    this.setStateViaStore = this.setStateViaStore.bind(this)
+    this.uploadIsDenied = this.uploadIsDenied.bind(this);
+
     this.state = StateStore.getState(STATE_KEYS_FROM_STORE);
 
-    this.uploadIsDenied = this.uploadIsDenied.bind(this);
+  }
+
+  componentDidMount() {
+    StateStore.on('STATE_UPDATED', this.setStateViaStore);
   }
 
   componentWillUnmout() {

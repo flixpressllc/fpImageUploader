@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
-    "custom-react-scripts": "0.0.23"
+    "custom-react-scripts": "0.0.23",
+    "enzyme": "^2.7.1",
+    "react-addons-test-utils": "^15.4.2"
   },
   "dependencies": {
     "breakpoint-sass": "^2.7.0",
