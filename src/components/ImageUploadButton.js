@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import FileUploader from './lib/FileUploader';
 import './ImageUploadButton.scss';
 
-import { binaryToAscii, fileToBinary } from '../utils/BinaryDataService';
-import { stringToHash } from '../utils/StringUtils';
+import { registerUserImageFile } from '../actions/ImageActions';
 
 const propTypes = {
   // text: PT.string.isRequired,
@@ -16,42 +15,8 @@ class ImageUploadButton extends Component {
     this.fileChangeHandler(e);
   }
 
-  registerUserImage(image, nameForImage) {
-    console.log(image, nameForImage);
-
-    // // Create appropriately sized data urls
-    // var smallDataUrl = ImageProcessingService.createResizedImageDataUrl(image, 150);
-    // var largeDataUrl;
-    // largeDataUrl = ImageProcessingService.createResizedImageDataUrl(image, 1200);
-    //
-    // // Prepare display image
-    // var displayImage = new Image();
-    // displayImage.name = nameForImage;
-    // displayImage.src = smallDataUrl;
-    //
-    // // Prepare uploadable data
-    // var blob = BinaryDataService.dataURLToBlob(largeDataUrl);
-    // blob.lastModifiedDate = new Date();
-    // blob.name = '' + nameForImage;
-    //
-    // // Disperse data
-    // buildSelectedUserImageUI(displayImage, blob);
-    // checkPageState();
-  }
-
   onFileLoad (file) {
-    var binary = fileToBinary(file);
-    var asciiString = binaryToAscii(binary);
-    var hash = stringToHash(asciiString);
-
-    // if (!isRegisteredUserImage(hash)) {
-    if (true) {
-
-      var image = new Image();
-      image.onload = () => this.registerUserImage(image,hash);
-      image.src = "data:image/jpeg;base64," + asciiString;
-
-    }
+    registerUserImageFile(file);
   }
 
   fileChangeHandler (e) {

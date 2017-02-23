@@ -1,8 +1,11 @@
-export function createResizedImageDataUrl (imageRef, resizeTo) {
+import { THUMBNAIL_WIDTH, MAX_UPLOAD_WIDTH } from '../settings';
+import { dataURLToBlob } from './BinaryDataService';
+
+export function createResizedImageDataUrl (imgElement, resizeTo) {
   var canvas = document.createElement('canvas'),
   max_size = resizeTo,// TODO : pull max size from a site config
-  width = imageRef.width,
-  height = imageRef.height;
+  width = imgElement.width,
+  height = imgElement.height;
 
   if (width > height) {
     if (width > max_size) {
@@ -26,10 +29,31 @@ export function createResizedImageDataUrl (imageRef, resizeTo) {
 
   canvas.width = width;
   canvas.height = height;
-  canvas.getContext('2d').drawImage(imageRef, 0, 0, width, height);
+  canvas.getContext('2d').drawImage(imgElement, 0, 0, width, height);
   var dataUrl = canvas.toDataURL('image/jpeg', 0.6);
 
   /* Now, we have to create a new image
   */
   return dataUrl;
+}
+
+export function processImageFileUpload (asciiString, desiredName)
+{ return new Promise(( resolve ) => {
+  var image = new Image();
+  image.onload = () => {
+    resolve(createUserImageSizes(image, desiredName));
+  };
+  image.src = "data:image/jpeg;base64," + asciiString;
+});}
+
+export function createUserImageSizes (image, desiredName) {
+  const displayDataUrl = createResizedImageDataUrl(image, THUMBNAIL_WIDTH);
+  const uploadDataUrl = createResizedImageDataUrl(image, MAX_UPLOAD_WIDTH);
+
+  // Prepare uploadable data
+  let blob = dataURLToBlob(uploadDataUrl);
+  blob.lastModifiedDate = new Date();
+  blob.name = '' + desiredName;
+
+  return {displayDataUrl, blob};
 }
