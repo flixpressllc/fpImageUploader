@@ -3,6 +3,7 @@ import StateStore from '../stores/StateStore';
 import * as StateActions from '../actions/StateActions';
 import ImageStore from '../stores/ImageStore';
 import ImageUploadButton from './ImageUploadButton';
+import SearchBar from './SearchBar';
 import ImageContainer from './ImageContainer';
 import ProceedButton from './ProceedButton';
 import {MAX_IMAGE_DEFAULT, MIN_IMAGE_DEFAULT} from '../settings';
@@ -61,6 +62,7 @@ class App extends Component {
   render() {
     return (
       <div className="fpImageUploader">
+        <SearchBar />
         <ImageUploadButton />
         <ImageContainer />
         <ProceedButton />
