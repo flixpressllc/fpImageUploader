@@ -13,8 +13,21 @@ class SearchBar extends Component {
     };
     this.search = this.search.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.reRender = this.reRender.bind(this);
 
-    dispatcher.register(this.handleActions.bind(this))
+    dispatcher.register(this.handleActions.bind(this));
+  }
+
+  componentDidMount () {
+    SearchStore.on('change', this.reRender);
+  }
+
+  componentWillUnmout () {
+    SearchStore.removeListener('change', this.reRender);
+  }
+
+  reRender() {
+    this.forceUpdate();
   }
 
   handleActions (action) {
@@ -40,6 +53,9 @@ class SearchBar extends Component {
   }
 
   render() {
+    let images = SearchStore.getImages().map(img => {
+      return <img src={ img.thumbnail_url } role="presentation" style={{maxWidth: '100px'}} />
+    });
     return (
       <div className="fpImageUploader-SearchBar">
         <input className="fpImageUploader-SearchBar-field"
@@ -49,7 +65,8 @@ class SearchBar extends Component {
           disabled={ this.state.isSearching }
           onClick={ this.search }>
           Search
-        </button>
+        </button><br/>
+        Store: { images }
       </div>
     );
   }

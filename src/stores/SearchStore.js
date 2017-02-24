@@ -1,49 +1,41 @@
 import { EventEmitter } from 'events';
 import dispatcher from '../actions/dispatcher';
 import { clone, isNotEmpty } from 'happy-helpers';
-import { processImageFileUpload } from '../utils/ImageProcessingService';
-import { binaryToAscii, fileToBinary } from '../utils/BinaryDataService';
-import { stringToHash } from '../utils/StringUtils';
 
 
 class SearchStore extends EventEmitter {
   constructor () {
     super();
     this.state = {
-      images: {}
+      images: [],
+      searchString: ''
     }
   }
 
-  getUserImages () {
-    return clone(this.state.userImages);
+  getImages () {
+    return clone(this.state.images);
   }
 
   getImageCount () {
-    return Object.keys(this.state.userImages).length;
+    return this.state.images.length;
   }
 
-  preProcessImageFile (file) {
-    var asciiString = binaryToAscii(fileToBinary(file));
-    var hash = stringToHash(asciiString);
-
-    if (isNotEmpty(this.state.userImages[hash])) return;
-
-    processImageFileUpload(asciiString, hash).then(data => {
-      const {displayDataUrl, blob} = data;
-      this.registerUserImage(hash, displayDataUrl, blob)
-    }).catch(error => { throw error; });
-  }
-
-  registerUserImage (hash, displayDataUrl, blob) {
-    // Create appropriately sized data urls
-    this.state.userImages[hash] = {displayDataUrl, blob};
-    this.emit('change', 'newUserImage');
+  processResults (results, searchString) {
+    this.state.searchString = searchString;
+    console.log(results)
+    this.state.images = results.info;
+    this.emit('change')
   }
 
   handleActions(action) {
     switch(action.type) {
-      case 'REGISTER_USER_IMAGE_FILE':
-        this.preProcessImageFile(action.fileData);
+      case 'RECEIVED_SEARCH_RESULTS':
+        if (action.results.status === 200) {
+          this.processResults(action.results.data, action.searchString);
+        } else {
+          console.error('The search returned an error');
+          console.error(action.results);
+        }
       break;
       default: break;
     }
@@ -53,4 +45,5 @@ class SearchStore extends EventEmitter {
 const searchStore = new SearchStore();
 dispatcher.register(searchStore.handleActions.bind(searchStore))
 
+window.searchStore = searchStore;
 export default searchStore;

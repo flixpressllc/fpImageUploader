@@ -17,9 +17,11 @@ function searchFlixpressAPI (searchString) {
 }
 
 export function search (searchString) {
+  if (searchString === '') throw new Error('Blank searchString');
   dispatcher.dispatch({type:'FETCH_SEARCH_RESULTS', searchString});
   searchFlixpressAPI(searchString).then(results => {
-    dispatcher.dispatch({type:'RECEIVED_SEARCH_RESULTS', status:'success'});
+    dispatcher.dispatch({type:'RECEIVED_SEARCH_RESULTS', status:'success', results, searchString});
+
   }).catch(error => {
     dispatcher.dispatch({type:'RECEIVED_SEARCH_RESULTS', status:'failure'});
   })
