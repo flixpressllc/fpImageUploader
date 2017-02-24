@@ -9,25 +9,31 @@ class SearchBar extends Component {
   constructor (props) {
     super(props);
     this.state = {
-      searchString: ''
+      searchString: '',
+      images: [],
+      page: 0
     };
     this.search = this.search.bind(this);
+    this.getLastPage = this.getLastPage.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    this.reRender = this.reRender.bind(this);
+    this.getCurrentPage = this.getCurrentPage.bind(this);
 
     dispatcher.register(this.handleActions.bind(this));
   }
 
   componentDidMount () {
-    SearchStore.on('change', this.reRender);
+    SearchStore.on('change', this.getCurrentPage);
   }
 
   componentWillUnmout () {
-    SearchStore.removeListener('change', this.reRender);
+    SearchStore.removeListener('change', this.getCurrentPage);
   }
 
-  reRender() {
-    this.forceUpdate();
+  getCurrentPage() {
+    if (this.state.page > 0) {
+      let images = SearchStore.getPage(this.state.page);
+      this.setState({images})
+    }
   }
 
   handleActions (action) {
@@ -44,7 +50,14 @@ class SearchBar extends Component {
 
   search() {
     let searchString = this.state.searchString;
-    SearchActions.search(searchString);
+    this.setState({page: 1}, () => {
+      SearchActions.search(searchString)
+    });
+  }
+
+  getLastPage() {
+    let lastPage = SearchStore.getPageCount();
+    this.setState({page: lastPage}, () => SearchStore.getPage(lastPage));
   }
 
   handleChange (e) {
@@ -53,8 +66,8 @@ class SearchBar extends Component {
   }
 
   render() {
-    let images = SearchStore.getImages().map(img => {
-      return <img src={ img.thumbnail_url } role="presentation" style={{maxWidth: '100px'}} />
+    let images = this.state.images.map((img,i) => {
+      return <img key={i} src={ img.thumbnail_url } role="presentation" style={{maxWidth: '100px'}} />
     });
     return (
       <div className="fpImageUploader-SearchBar">
@@ -67,6 +80,12 @@ class SearchBar extends Component {
           Search
         </button><br/>
         Store: { images }
+        <button className="fpImageUploader-SearchBar-button"
+          type="button"
+          disabled={ this.state.isSearching }
+          onClick={ this.getLastPage }>
+          Last Page
+        </button><br/>
       </div>
     );
   }
