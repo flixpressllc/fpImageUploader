@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './SearchBar.scss';
+import SelectableMedia from './SelectableMedia';
 
 import SearchStore from '../stores/SearchStore';
 import * as SearchActions from '../actions/SearchActions';
@@ -69,7 +70,11 @@ class SearchBar extends Component {
 
   render() {
     let images = this.state.images.map((img,i) => {
-      return <img key={i} src={ img.thumbnail_url } role="presentation" style={{maxWidth: '100px'}} />
+      return (
+        <SelectableMedia key={i} disabled={false} onSelect={()=> {}}>
+          <img src={ img.thumbnail_url } role="presentation" />
+        </SelectableMedia>
+      )
     });
     return (
       <div className="fpImageUploader-SearchBar">

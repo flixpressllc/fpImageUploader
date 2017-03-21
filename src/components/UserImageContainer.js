@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './UserImageContainer.scss';
 
+import SelectableMedia from './SelectableMedia';
 import UserImageStore from '../stores/UserImageStore';
 import { traverseObject } from 'happy-helpers';
 
@@ -29,9 +30,11 @@ class UserImageContainer extends Component {
     let imagesArr = [];
     traverseObject(images, (key, val) => {
       imagesArr.push(
-        <img src={val.displayDataUrl} key={key}
-          onClick={() => console.log(val.blob.name)}
-          role="presentation"/>
+        <SelectableMedia key={key} disabled={false} onSelect={()=> {}}>
+          <img src={val.displayDataUrl}
+            onClick={() => console.log(val.blob.name)}
+            role="presentation"/>
+        </SelectableMedia>
       )
     })
     return (

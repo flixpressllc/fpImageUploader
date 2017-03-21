@@ -1,0 +1,32 @@
+@import '../styles/base-includes';
+
+$background-color: lightgrey;
+
+@function heightFromWidth ($width) {
+  $ratio: 16 / 9;
+  @return $width / $ratio;
+}
+
+.fpImageUploader-SelectableMedia {
+  & {
+    border: 2px solid $background-color;
+    background: $background-color;
+    display: flex;
+    flex-direction: column;
+    width: 200px;
+  }
+
+  &-mediaItem {
+    height: heightFromWidth(200px);
+    > * {
+      max-width: 100%;
+      max-height: heightFromWidth(200px);
+      margin: auto;
+      display: flex;
+    }
+  }
+
+  &-select {
+    @extend %button;
+  }
+}
