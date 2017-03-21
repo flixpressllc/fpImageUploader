@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import './ImageContainer.scss';
+import './UserImageContainer.scss';
 
-import ImageStore from '../stores/ImageStore';
+import UserImageStore from '../stores/UserImageStore';
 import { traverseObject } from 'happy-helpers';
 
-class ImageContainer extends Component {
+class UserImageContainer extends Component {
   constructor (props) {
     super(props);
     this.displayImage = this.displayImage.bind(this);
@@ -13,14 +13,14 @@ class ImageContainer extends Component {
   }
 
   componentDidMount() {
-    ImageStore.on('change', this.displayImage);
+    UserImageStore.on('change', this.displayImage);
   }
   componentWillUnmout() {
-    ImageStore.removeListener('change', this.displayImage)
+    UserImageStore.removeListener('change', this.displayImage)
   }
 
   displayImage() {
-    const images = ImageStore.getUserImages();
+    const images = UserImageStore.getUserImages();
     this.setState({images})
   }
 
@@ -35,11 +35,11 @@ class ImageContainer extends Component {
       )
     })
     return (
-      <div className="fpImageUploader-ImageContainer">
+      <div className="fpImageUploader-UserImageContainer">
         { imagesArr }
       </div>
     );
   }
 }
 
-export default ImageContainer;
+export default UserImageContainer;

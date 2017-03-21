@@ -1,10 +1,10 @@
 import React, { Component, PropTypes as PT } from 'react';
 import StateStore from '../stores/StateStore';
 import * as StateActions from '../actions/StateActions';
-import ImageStore from '../stores/ImageStore';
-import ImageUploadButton from './ImageUploadButton';
+import UserImageStore from '../stores/UserImageStore';
+import UserImageUploadButton from './UserImageUploadButton';
 import SearchBar from './SearchBar';
-import ImageContainer from './ImageContainer';
+import UserImageContainer from './UserImageContainer';
 import ProceedButton from './ProceedButton';
 import {MAX_IMAGE_DEFAULT, MIN_IMAGE_DEFAULT} from '../settings';
 import './App.scss';
@@ -35,7 +35,7 @@ class App extends Component {
   }
 
   checkImageCount() {
-    let count = ImageStore.getImageCount();
+    let count = UserImageStore.getImageCount();
     if (count >= this.props.minImages) {
       StateActions.setState({canUpload: true});
     }
@@ -43,13 +43,13 @@ class App extends Component {
 
   componentDidMount() {
     StateStore.on('STATE_UPDATED', this.setStateViaStore);
-    ImageStore.on('change', this.checkImageCount)
+    UserImageStore.on('change', this.checkImageCount)
     this.checkImageCount();
   }
 
   componentWillUnmout() {
     StateStore.removeListener('STATE_UPDATED', this.setStateViaStore);
-    ImageStore.removeListener('change', this.checkImageCount);
+    UserImageStore.removeListener('change', this.checkImageCount);
   }
 
   componentDidUpdate() {
@@ -62,9 +62,9 @@ class App extends Component {
   render() {
     return (
       <div className="fpImageUploader">
+        <UserImageUploadButton />
+        <UserImageContainer />
         <SearchBar />
-        <ImageUploadButton />
-        <ImageContainer />
         <ProceedButton />
       </div>
     );

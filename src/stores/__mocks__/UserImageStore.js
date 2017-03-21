@@ -1,4 +1,4 @@
-const imageStoreInstance = require.requireActual('../ImageStore').default;
+const imageStoreInstance = require.requireActual('../UserImageStore').default;
 
 imageStoreInstance.__setNumImages = function (num) {
   this.numImagesOverride = num;

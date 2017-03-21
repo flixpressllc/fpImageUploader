@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import FileUploader from './lib/FileUploader';
-import './ImageUploadButton.scss';
+import './UserImageUploadButton.scss';
 
 import { registerUserImageFile } from '../actions/ImageActions';
 
@@ -9,7 +9,7 @@ const propTypes = {
   // onChange: PT.func.isRequired
 }
 
-class ImageUploadButton extends Component {
+class UserImageUploadButton extends Component {
   handleChange (e) {
     e.preventDefault();
     this.fileChangeHandler(e);
@@ -39,14 +39,14 @@ class ImageUploadButton extends Component {
 
   render() {
     return (
-      <FileUploader className="fpImageUploader-ImageUploadButton"
-        buttonClass="fpImageUploader-ImageUploadButton-button"
+      <FileUploader className="fpImageUploader-UserImageUploadButton"
+        buttonClass="fpImageUploader-UserImageUploadButton-button"
         multiple={ true }
         text="Upload Images" onChange={ this.handleChange.bind(this) }/>
     );
   }
 }
 
-ImageUploadButton.propTypes = propTypes;
+UserImageUploadButton.propTypes = propTypes;
 
-export default ImageUploadButton;
+export default UserImageUploadButton;

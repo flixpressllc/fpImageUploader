@@ -6,7 +6,7 @@ import { binaryToAscii, fileToBinary } from '../utils/BinaryDataService';
 import { stringToHash } from '../utils/StringUtils';
 
 
-class ImageStore extends EventEmitter {
+class UserImageStore extends EventEmitter {
   constructor () {
     super();
     this.state = {
@@ -51,7 +51,7 @@ class ImageStore extends EventEmitter {
   }
 }
 
-const imageStore = new ImageStore();
+const imageStore = new UserImageStore();
 dispatcher.register(imageStore.handleActions.bind(imageStore))
 
 export default imageStore;
