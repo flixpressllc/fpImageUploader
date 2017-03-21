@@ -1,27 +1,93 @@
 import { EventEmitter } from 'events';
 import dispatcher from '../actions/dispatcher';
-import { clone, isEmpty } from 'happy-helpers';
+import * as SearchActions from '../actions/SearchActions';
+import { clone, isNotEmpty } from 'happy-helpers';
 import { SEARCH_PAGE_SIZE } from '../settings';
 
+const initialState = {
+  pages: [],
+  searchString: '',
+  totalResults: 0,
+  totalPages: 0,
+  currentPage: 1
+};
 
 class SearchStore extends EventEmitter {
   constructor () {
     super();
-    this.state = {
-      pages: [],
-      searchString: '',
-      totalResults: 0,
-      totalPages: 0
+    this.state = clone(initialState);
+  }
+
+  reset () {
+    this.state = clone(initialState);
+  }
+
+  getPage () {
+    return clone(this.state.pages[this.state.currentPage - 1]);
+  }
+
+  firstPage () {
+    if (this.state.page === 1) return;
+    this.state.currentPage = 1;
+    this.emit('change');
+  }
+
+  nextPageNumber () {
+    return this.state.currentPage + 1;
+  }
+
+  prevPageNumber () {
+    return this.state.currentPage - 1;
+  }
+
+  nextPage () {
+    let nextPageNumber = this.nextPageNumber();
+    if (nextPageNumber <= this.state.totalPages) {
+      this.fillIfEmpty(nextPageNumber).then(() => {
+        this.state.currentPage = nextPageNumber;
+        this.emit('change');
+      })
     }
   }
 
-  getPage (num) {
-    if (isEmpty(this.state.pages[num - 1])) {
-      console.log('need to fetch');
-      
-      return [];
+  fillIfEmpty (pageNum) {
+    let _this = this;
+    return new Promise(resolve => {
+      if (isNotEmpty(_this.state.pages[pageNum - 1])) {
+        resolve();
+        return;
+      }
+      _this.cacheFillPromise = resolve;
+      SearchActions.fillCacheAtPageWithString(pageNum, _this.state.searchString);
+    });
+  }
+
+  prevPage () {
+    if (this.prevPageNumber() > 0) {
+      this.state.currentPage = this.prevPageNumber();
+      this.emit('change');
     }
-    return clone(this.state.pages[num - 1]);
+  }
+
+  pageExists (num) {
+    return num > 0 && num <= this.state.totalPages;
+  }
+
+  pageHasContent (num) {
+    return isNotEmpty(this.state.pages[num - 1]);
+  }
+
+  pageNeedsContent (num) {
+    if (!this.pageExists(num)) return false;
+    return !this.pageHasContent(num);
+  }
+
+  getLastSearchString () {
+    return this.state.searchString;
+  }
+
+  fillPage (pageNum, images) {
+    this.state.pages[pageNum - 1] = images;
   }
 
   getPageCount () {
@@ -55,11 +121,12 @@ class SearchStore extends EventEmitter {
   handleActions(action) {
     switch(action.type) {
       case 'RECEIVED_SEARCH_RESULTS':
-        if (action.results.status === 200) {
-          this.processInitialResults(action.results.data, action.searchString);
+        if (action.status === 'failure') return;
+        if (action.initialSearch) {
+          this.processInitialResults(action.data, action.searchString);
         } else {
-          console.error('The search returned an error');
-          console.error(action.results);
+          this.state.pages[action.page - 1] = action.images;
+          this.cacheFillPromise();
         }
       break;
       default: break;

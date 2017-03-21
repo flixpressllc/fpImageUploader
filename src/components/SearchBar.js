@@ -14,7 +14,8 @@ class SearchBar extends Component {
       page: 0
     };
     this.search = this.search.bind(this);
-    this.getLastPage = this.getLastPage.bind(this);
+    this.nextPage = this.nextPage.bind(this);
+    this.prevPage = this.prevPage.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.getCurrentPage = this.getCurrentPage.bind(this);
 
@@ -30,10 +31,8 @@ class SearchBar extends Component {
   }
 
   getCurrentPage() {
-    if (this.state.page > 0) {
-      let images = SearchStore.getPage(this.state.page);
-      this.setState({images})
-    }
+    let images = SearchStore.getPage();
+    this.setState({images})
   }
 
   handleActions (action) {
@@ -55,9 +54,12 @@ class SearchBar extends Component {
     });
   }
 
-  getLastPage() {
-    let lastPage = SearchStore.getPageCount();
-    this.setState({page: lastPage}, () => SearchStore.getPage(lastPage));
+  nextPage() {
+    SearchStore.nextPage();
+  }
+
+  prevPage() {
+    SearchStore.prevPage();
   }
 
   handleChange (e) {
@@ -83,8 +85,14 @@ class SearchBar extends Component {
         <button className="fpImageUploader-SearchBar-button"
           type="button"
           disabled={ this.state.isSearching }
-          onClick={ this.getLastPage }>
-          Last Page
+          onClick={ this.nextPage }>
+          Next Page
+        </button><br/>
+        <button className="fpImageUploader-SearchBar-button"
+          type="button"
+          disabled={ this.state.isSearching }
+          onClick={ this.prevPage }>
+          Prev Page
         </button><br/>
       </div>
     );

@@ -1,6 +1,7 @@
 import dispatcher from './dispatcher';
-import { CACHE_PAGE_SIZE } from '../settings';
+import SearchStore from '../stores/SearchStore';
 import { ajax } from '../utils/ajax';
+import { SEARCH_PAGE_SIZE } from '../settings';
 
 const SEARCH_TYPE = 'graphic';
 
@@ -12,28 +13,49 @@ function searchFlixpressAPI (searchString, page) {
     '/' + SEARCH_TYPE +
     '/' + keywords +
     '/' + page +
-    '/' + CACHE_PAGE_SIZE;
+    '/' + SEARCH_PAGE_SIZE;
   return ajax({url, dataType});
 }
 
 export function search (searchString) {
   if (searchString === '') throw new Error('Blank searchString');
+  if (searchString === SearchStore.getLastSearchString()) {
+    SearchStore.firstPage();
+    return;
+  }
   dispatcher.dispatch({type:'FETCH_SEARCH_RESULTS', searchString});
-  searchFlixpressAPI(searchString).then(results => {
-    dispatcher.dispatch({type:'RECEIVED_SEARCH_RESULTS', status:'success', results, searchString});
 
-  }).catch(error => {
-    dispatcher.dispatch({type:'RECEIVED_SEARCH_RESULTS', status:'failure'});
-  })
+  searchFlixpressAPI(searchString).then(results => {
+    if (results.status === 200) {
+
+      dispatcher.dispatch({type:'RECEIVED_SEARCH_RESULTS', status: 'success', initialSearch: true, data: results.data, searchString});
+    } else {
+      console.error('The search returned an error');
+      console.error(results);
+      dispatcher.dispatch({type:'RECEIVED_SEARCH_RESULTS', status: 'failure'});
+    }
+  }).catch((e) => {
+    dispatcher.dispatch({type:'RECEIVED_SEARCH_RESULTS', status: 'failure', error: e});
+  });
 
 }
 
-export function getCacheForSearch (searchString, cachePage) {
-  dispatcher.dispatch({type:'FETCH_SEARCH_CACHE', searchString});
-  searchFlixpressAPI(searchString).then(results => {
-    dispatcher.dispatch({type:'RECEIVED_SEARCH_CACHE', status:'success', results, searchString});
+export function fillCacheAtPageWithString (pageNum, searchString) {
+  if (searchString === '') throw new Error('Blank searchString');
+  dispatcher.dispatch({type:'FETCH_SEARCH_RESULTS', searchString});
 
-  }).catch(error => {
-    dispatcher.dispatch({type:'RECEIVED_SEARCH_CACHE', status:'failure'});
-  })
+  searchFlixpressAPI(searchString, pageNum).then(results => {
+    if (results.status === 200) {
+
+      dispatcher.dispatch({type:'RECEIVED_SEARCH_RESULTS', status: 'success', initialSearch: false, page: pageNum, images: results.data.info});
+    } else {
+      console.error('The search returned an error');
+      console.error(results);
+      dispatcher.dispatch({type:'RECEIVED_SEARCH_RESULTS', status: 'failure'});
+    }
+  }).catch((e) => {
+    console.error(e);
+    dispatcher.dispatch({type:'RECEIVED_SEARCH_RESULTS', status: 'failure', error: e});
+  });
+
 }
