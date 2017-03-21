@@ -31,7 +31,7 @@ class SearchBar extends Component {
   }
 
   getCurrentPage() {
-    let images = SearchStore.getPage();
+    let images = SearchStore.getCurrentPage();
     this.setState({images})
   }
 
@@ -80,14 +80,20 @@ class SearchBar extends Component {
           disabled={ this.state.isSearching }
           onClick={ this.search }>
           Search
-        </button><br/>
-        Store: { images }
+        </button><br/><br/>
+
+        Page: {SearchStore.getCurrentPageNumber()} <br/><br/>
+      Total Pages: {SearchStore.getPageCount()} <br/><br/>
+
+        { images } <br/><br/>
+
         <button className="fpImageUploader-SearchBar-button"
           type="button"
           disabled={ this.state.isSearching }
           onClick={ this.nextPage }>
           Next Page
         </button><br/>
+
         <button className="fpImageUploader-SearchBar-button"
           type="button"
           disabled={ this.state.isSearching }

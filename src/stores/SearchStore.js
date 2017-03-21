@@ -9,7 +9,7 @@ const initialState = {
   searchString: '',
   totalResults: 0,
   totalPages: 0,
-  currentPage: 1
+  currentPage: 0
 };
 
 class SearchStore extends EventEmitter {
@@ -22,8 +22,12 @@ class SearchStore extends EventEmitter {
     this.state = clone(initialState);
   }
 
-  getPage () {
+  getCurrentPage () {
     return clone(this.state.pages[this.state.currentPage - 1]);
+  }
+
+  getCurrentPageNumber () {
+    return this.state.currentPage;
   }
 
   firstPage () {
@@ -110,12 +114,16 @@ class SearchStore extends EventEmitter {
   }
 
   processInitialResults (results, searchString) {
-    console.log(results)
-    this.state.searchString = searchString;
-    this.state.pages = this.paginate(results.info);
     this.state.totalResults = results.totalSearchResults;
-    this.state.totalPages = Math.ceil(this.state.totalResults / SEARCH_PAGE_SIZE)
-    this.emit('change')
+    this.state.searchString = searchString;
+    if (this.state.totalResults > 0) {
+      this.state.currentPage = 1;
+      this.state.pages = this.paginate(results.info);
+      this.state.totalPages = Math.ceil(this.state.totalResults / SEARCH_PAGE_SIZE)
+    } else {
+      this.state.currentPage = 0;
+    }
+    this.emit('change');
   }
 
   handleActions(action) {
