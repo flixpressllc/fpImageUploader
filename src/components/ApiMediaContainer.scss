@@ -1,0 +1,10 @@
+@import '../styles/base-includes';
+
+.fpImageUploader-ApiMediaContainer {
+  &-container {
+    @extend %media-container;
+  }
+  &-button {
+    @extend %button;
+  }
+}

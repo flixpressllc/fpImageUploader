@@ -170,3 +170,12 @@
   color: #888;
   font-size: 0.9em;
 }
+
+%media-container {
+  display: flex;
+  flex-wrap: wrap;
+
+  > * {
+    margin: 12px;
+  }
+}

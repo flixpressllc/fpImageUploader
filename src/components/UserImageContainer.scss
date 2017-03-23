@@ -1,0 +1,7 @@
+@import "../styles/base-includes";
+
+.fpImageUploader-UserImageContainer {
+  & {
+    @extend %media-container;
+  }
+}

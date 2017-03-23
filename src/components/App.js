@@ -4,6 +4,7 @@ import * as StateActions from '../actions/StateActions';
 import UserImageStore from '../stores/UserImageStore';
 import UserImageUploadButton from './UserImageUploadButton';
 import SearchBar from './SearchBar';
+import ApiMediaContainer from './ApiMediaContainer';
 import UserImageContainer from './UserImageContainer';
 import ProceedButton from './ProceedButton';
 import {MAX_IMAGE_DEFAULT, MIN_IMAGE_DEFAULT} from '../settings';
@@ -65,6 +66,7 @@ class App extends Component {
         <UserImageUploadButton />
         <UserImageContainer />
         <SearchBar />
+        <ApiMediaContainer />
         <ProceedButton />
       </div>
     );

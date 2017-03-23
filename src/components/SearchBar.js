@@ -10,30 +10,12 @@ class SearchBar extends Component {
   constructor (props) {
     super(props);
     this.state = {
-      searchString: '',
-      images: [],
-      page: 0
+      searchString: ''
     };
     this.search = this.search.bind(this);
-    this.nextPage = this.nextPage.bind(this);
-    this.prevPage = this.prevPage.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    this.getCurrentPage = this.getCurrentPage.bind(this);
 
     dispatcher.register(this.handleActions.bind(this));
-  }
-
-  componentDidMount () {
-    SearchStore.on('change', this.getCurrentPage);
-  }
-
-  componentWillUnmout () {
-    SearchStore.removeListener('change', this.getCurrentPage);
-  }
-
-  getCurrentPage() {
-    let images = SearchStore.getCurrentPage();
-    this.setState({images})
   }
 
   handleActions (action) {
@@ -55,27 +37,12 @@ class SearchBar extends Component {
     });
   }
 
-  nextPage() {
-    SearchStore.nextPage();
-  }
-
-  prevPage() {
-    SearchStore.prevPage();
-  }
-
   handleChange (e) {
     let searchString = e.target.value;
     this.setState({searchString});
   }
 
   render() {
-    let images = this.state.images.map((img,i) => {
-      return (
-        <SelectableMedia key={i} disabled={false} onSelect={()=> {}}>
-          <img src={ img.thumbnail_url } role="presentation" />
-        </SelectableMedia>
-      )
-    });
     return (
       <div className="fpImageUploader-SearchBar">
         <input className="fpImageUploader-SearchBar-field"
@@ -85,26 +52,7 @@ class SearchBar extends Component {
           disabled={ this.state.isSearching }
           onClick={ this.search }>
           Search
-        </button><br/><br/>
-
-        Page: {SearchStore.getCurrentPageNumber()} <br/><br/>
-      Total Pages: {SearchStore.getPageCount()} <br/><br/>
-
-        { images } <br/><br/>
-
-        <button className="fpImageUploader-SearchBar-button"
-          type="button"
-          disabled={ this.state.isSearching }
-          onClick={ this.nextPage }>
-          Next Page
-        </button><br/>
-
-        <button className="fpImageUploader-SearchBar-button"
-          type="button"
-          disabled={ this.state.isSearching }
-          onClick={ this.prevPage }>
-          Prev Page
-        </button><br/>
+        </button>
       </div>
     );
   }
